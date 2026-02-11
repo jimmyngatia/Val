@@ -2,21 +2,466 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Be My Valentine?</title>
-    <link rel="stylesheet" href="style.css">
-        
+    <style>
+        :root {
+            --pink-light: #ffafcc;
+            --pink-hot: #ff4d6d;
+            --flower-center: #ffb703;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+            background: radial-gradient(circle at 20% 30%, #ffdee9 0%, transparent 40%),
+                        radial-gradient(circle at 80% 70%, #b5e2ff 0%, transparent 40%),
+                        radial-gradient(circle at 50% 50%, #fbc2eb 0%, #a6c1ee 100%);
+            background-size: 200% 200%;
+            background-attachment: fixed;
+            animation: aurora 15s ease infinite alternate;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        @keyframes aurora {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .decoration-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1;
+        }
+
+        .flower {
+            position: absolute;
+            width: 30px; height: 30px;
+            fill: #ffccd5;
+            filter: drop-shadow(0 0 5px rgba(255,182,193,0.5));
+            animation: fall var(--d) linear infinite;
+        }
+
+        .heart {
+            position: absolute;
+            width: 15px; height: 15px;
+            background: var(--pink-hot);
+            transform: rotate(-45deg);
+            opacity: 0.6;
+            animation: fall var(--d) linear infinite;
+        }
+        .heart::before, .heart::after {
+            content: ""; position: absolute;
+            width: 15px; height: 15px;
+            background: inherit; border-radius: 50%;
+        }
+        .heart::before { top: -7.5px; left: 0; }
+        .heart::after { left: 7.5px; top: 0; }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg) translateX(50px); opacity: 0; }
+        }
+
+        /* Container for card and buttons */
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 100vw;
+        }
+
+        /* Responsive Glass Card */
+        #card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            padding: 2rem 1.5rem;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 450px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #ee259a;
+            font-size: clamp(1.3rem, 6vw, 2.2rem);
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+            line-height: 1.3;
+            text-shadow: 0 2px 4px rgba(238, 37, 154, 0.1);
+        }
+
+        .btn-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(12px, 3vw, 20px);
+            flex-wrap: wrap;
+            padding: 0 1rem;
+        }
+
+        #yes {
+            background: linear-gradient(45deg, var(--pink-hot), #ff758f);
+            color: white;
+            padding: clamp(10px, 2vw, 14px) clamp(24px, 5vw, 36px);
+            border-radius: 30px;
+            border: none;
+            font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(255, 77, 109, 0.3);
+            transition: all 0.4s ease;
+            white-space: nowrap;
+            position: relative;
+            z-index: 100;
+            font-family: 'Georgia', serif;
+            letter-spacing: 0.5px;
+        }
+
+        #yes:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 77, 109, 0.4);
+        }
+
+        #yes:active {
+            transform: translateY(-1px);
+        }
+
+        #no {
+            background: rgba(255, 255, 255, 0.95);
+            color: #666;
+            padding: clamp(10px, 2vw, 14px) clamp(24px, 5vw, 36px);
+            border-radius: 30px;
+            border: 2px solid rgba(255, 182, 193, 0.5);
+            font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            white-space: nowrap;
+            position: relative;
+            font-family: 'Georgia', serif;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        #no.is-dodging {
+            position: fixed;
+            z-index: 1000;
+        }
+
+        #no:hover {
+            background: rgba(255, 255, 255, 0.98);
+            border-color: rgba(255, 77, 109, 0.3);
+            transform: scale(1.05);
+        }
+
+        #no.moving {
+            animation: moveButton 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        @keyframes moveButton {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            z-index: 999;
+            animation: confettiFall linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes confettiFall {
+            0% { 
+                transform: translateY(0) rotate(0deg) translateX(0);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(720deg) translateX(var(--tx, 0));
+                opacity: 0;
+            }
+        }
+
+        .counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            color: #ff4d6d;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+            z-index: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Desktop specific tweaks */
+        @media (min-width: 768px) {
+            #card { 
+                padding: 3rem; 
+                border-radius: 50px;
+                width: 95%;
+                max-width: 500px;
+            }
+            .btn-wrap { gap: 25px; }
+            .counter {
+                top: 30px;
+                right: 30px;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            #card {
+                margin-top: 1rem;
+            }
+            .btn-wrap {
+                gap: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <div id="card">
-        <h2 id="question">Will you be my Valentine?❤️</h2>
-        <div class="btn-container">
-            <button id="yes" onclick="celebrate()">Yes!</button>
-            <button id="no" onmouseover="moveNo()" onclick="moveNo()">No</button>
+    <div class="decoration-layer" id="decorationLayer"></div>
+    <div class="counter" id="counter" style="display: none;">Attempts: 0</div>
+
+    <div class="container">
+        <div id="card">
+            <h2 id="msg">Will you be my Valentine? ❤️</h2>
+            <div class="btn-wrap">
+                <button id="yes" onclick="celebrate()">Yes ✨</button>
+                <button id="no" onmouseover="dodge()" ontouchstart="dodge()" onclick="dodge()">No</button>
+            </div>
         </div>
     </div>
 
-   <script src="index.js"></script> 
+    <script>
+        const layer = document.getElementById('decorationLayer');
+        const noBtn = document.getElementById('no');
+        const card = document.getElementById('card');
+        const yesBtn = document.getElementById('yes');
+        const counter = document.getElementById('counter');
+        let dodgeCount = 0;
+
+        function spawnDecor() {
+            layer.innerHTML = '';
+            const count = window.innerWidth < 768 ? 15 : 30;
+            for (let i = 0; i < count; i++) {
+                const isFlower = Math.random() > 0.5;
+                const el = document.createElement('div');
+                if (isFlower) {
+                    el.className = 'flower';
+                    el.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12,22C12,22 12,18 12,15M12,15C9,15 6,12 6,9C6,6 9,3 12,3C15,3 18,6 18,9C18,12 15,15 12,15Z" /></svg>`;
+                } else {
+                    el.className = 'heart';
+                }
+                el.style.left = Math.random() * 100 + "vw";
+                el.style.setProperty('--d', (Math.random() * 5 + 5) + "s");
+                el.style.animationDelay = (Math.random() * 5) + "s";
+                layer.appendChild(el);
+            }
+        }
+        spawnDecor();
+
+        function getElementCenter(el) {
+            const rect = el.getBoundingClientRect();
+            return {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2,
+                width: rect.width,
+                height: rect.height
+            };
+        }
+
+        function dodge() {
+            dodgeCount++;
+            counter.textContent = `Attempts: ${dodgeCount}`;
+            if (counter.style.display === 'none') {
+                counter.style.display = 'block';
+            }
+
+            // Switch to fixed positioning and mark as dodging
+            if (!noBtn.classList.contains('is-dodging')) {
+                noBtn.classList.add('is-dodging');
+                // Set initial fixed position where button currently is
+                const rect = noBtn.getBoundingClientRect();
+                noBtn.style.left = rect.left + 'px';
+                noBtn.style.top = rect.top + 'px';
+            }
+
+            // Get button dimensions
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+            
+            // Get card bounds
+            const cardRect = card.getBoundingClientRect();
+            
+            // Define movement area: within card + slightly outside (60px margin)
+            const margin = 60;
+            const minX = cardRect.left - margin;
+            const maxX = cardRect.right + margin - btnWidth;
+            const minY = cardRect.top - margin;
+            const maxY = cardRect.bottom + margin - btnHeight;
+
+            // Get centers for collision detection
+            const yesRect = yesBtn.getBoundingClientRect();
+            const yesCenterX = yesRect.left + yesRect.width / 2;
+            const yesCenterY = yesRect.top + yesRect.height / 2;
+
+            let newX, newY;
+            let isSafe = false;
+            let attempts = 0;
+
+            // Try to find a safe position away from yes button
+            while (!isSafe && attempts < 100) {
+                newX = Math.random() * (maxX - minX) + minX;
+                newY = Math.random() * (maxY - minY) + minY;
+
+                const distFromYes = Math.hypot(newX - yesCenterX, newY - yesCenterY);
+                
+                if (distFromYes > 100) {
+                    isSafe = true;
+                }
+                attempts++;
+            }
+
+            // Fallback to corners if random fails
+            if (!isSafe) {
+                const corners = [
+                    [minX, minY],
+                    [maxX, minY],
+                    [minX, maxY],
+                    [maxX, maxY]
+                ];
+                let bestCorner = corners[0];
+                let bestDist = 0;
+                
+                for (const corner of corners) {
+                    const dist = Math.hypot(corner[0] - yesCenterX, corner[1] - yesCenterY);
+                    if (dist > bestDist) {
+                        bestDist = dist;
+                        bestCorner = corner;
+                    }
+                }
+                newX = bestCorner[0];
+                newY = bestCorner[1];
+            }
+
+            // Clamp to bounds to ensure button stays within movement area
+            newX = Math.max(minX, Math.min(newX, maxX));
+            newY = Math.max(minY, Math.min(newY, maxY));
+
+            noBtn.classList.add('moving');
+            noBtn.style.left = newX + 'px';
+            noBtn.style.top = newY + 'px';
+            
+            setTimeout(() => noBtn.classList.remove('moving'), 400);
+        }
+
+        function celebrate() {
+            noBtn.style.display = 'none';
+            counter.style.display = 'none';
+            document.getElementById('msg').innerHTML = "You've made me the happiest! 🌸💖";
+            yesBtn.style.transform = "scale(1.3)";
+            yesBtn.innerHTML = "Forever! ✨";
+            yesBtn.style.pointerEvents = "none";
+
+            const count = window.innerWidth < 768 ? 100 : 200;
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + "vw";
+                confetti.style.top = "-20px";
+                
+                const colors = ['#ff4d6d', '#ffafcc', '#ffc2e5', '#ffb703', '#ff758f', '#ffd6e8'];
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                confetti.style.borderRadius = Math.random() > 0.5 ? "50%" : "0";
+                confetti.style.width = (Math.random() * 8 + 8) + "px";
+                confetti.style.height = (Math.random() * 8 + 8) + "px";
+                
+                const duration = Math.random() * 2 + 2;
+                confetti.style.animationDuration = duration + "s";
+                confetti.style.setProperty('--tx', (Math.random() * 200 - 100) + 'px');
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), duration * 1000);
+            }
+        }
+
+        // Reposition no button if it goes off screen on resize
+        window.addEventListener('resize', () => {
+            spawnDecor();
+            // Reset button position if window resizes
+            if (noBtn.style.position === 'fixed') {
+                const screenW = window.innerWidth;
+                const screenH = window.innerHeight;
+                const btnWidth = noBtn.offsetWidth;
+                const btnHeight = noBtn.offsetHeight;
+                
+                const currentX = parseFloat(noBtn.style.left);
+                const currentY = parseFloat(noBtn.style.top);
+                
+                const margin = 20;
+                if (currentX + btnWidth > screenW - margin || 
+                    currentY + btnHeight > screenH - margin ||
+                    currentX < margin ||
+                    currentY < margin) {
+                    dodge();
+                }
+            }
+        });
+
+        // Mobile-friendly: Show counter after first attempt
+        if (window.innerWidth < 768) {
+            noBtn.addEventListener('touchstart', () => {
+                if (dodgeCount === 0) {
+                    counter.style.display = 'block';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
