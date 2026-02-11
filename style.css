@@ -1,0 +1,82 @@
+body {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    margin: 0;
+    background-color: #ffeef2;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+}
+
+#card {
+    text-align: center;
+    padding: 50px;
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 350px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h2 {
+    color: #d63384;
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.btn-container {
+    display: flex;
+    gap: 20px;
+    position: relative;
+    width: 100%;
+    justify-content: center;
+    height: 50px;
+}
+
+button {
+    padding: 12px 25px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+#yes {
+    background-color: #ff4d6d;
+    color: white;
+    box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+}
+
+#yes:hover {
+    transform: scale(1.2);
+    background-color: #ff0a54;
+}
+
+/* Fixed No button positioning */
+#no {
+    background-color: #dee2e6;
+    color: #6c757d;
+    position: relative; /* Changed from absolute to relative for start */
+    z-index: 999;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    z-index: 1000;
+    border-radius: 50%;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to { transform: translateY(100vh) rotate(360deg); }
+}
